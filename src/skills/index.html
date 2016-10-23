@@ -1,4 +1,11 @@
 <template>
-  <h2>${title}</h2>
-  <div class="btn btn-warning" click.trigger="openDialog()">Open Dialog</div>
+  <div class="clearfix">
+    <div class="col-xs-12">
+      <span click.trigger="addSkill()"><i class="fa fa-plus"></i> Add Skill</span>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" repeat.for="skill of skills" click.trigger="openDialog(skill)">
+      <img src.bind="skill.imageUrl" style="max-width: 100%;" />
+      <h3 class="title text-center">${skill.title}</h3>
+    </div>
+  </div>
 </template>

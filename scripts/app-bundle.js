@@ -73,6 +73,13 @@ define('profile/index',["require", "exports"], function (require, exports) {
     exports.Profile = Profile;
 });
 
+define('resources/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    function configure(config) {
+    }
+    exports.configure = configure;
+});
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -90,6 +97,12 @@ define('dialog/skillDialog/index',["require", "exports", "aurelia-framework", "a
         }
         SkillDialog.prototype.close = function () {
             this.dialogController.cancel();
+        };
+        SkillDialog.prototype.activate = function (model) {
+            console.log(model);
+            for (var key in model) {
+                this[key] = model[key];
+            }
         };
         SkillDialog = __decorate([
             aurelia_framework_1.autoinject, 
@@ -109,31 +122,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('skills/index',["require", "exports", 'aurelia-dialog', 'aurelia-framework', '../dialog/skillDialog/index'], function (require, exports, aurelia_dialog_1, aurelia_framework_1, index_1) {
+define('skills/index',["require", "exports", 'aurelia-dialog', 'aurelia-framework', '../dialog/skillDialog/index', '../api'], function (require, exports, aurelia_dialog_1, aurelia_framework_1, index_1, api_1) {
     "use strict";
     var Skills = (function () {
-        function Skills(dialogService) {
-            this.title = 'Skills';
+        function Skills(dialogService, api) {
+            this.skills = [];
             this.skillDialog = dialogService;
+            this.api = api;
+            this.skills = api.skills.get();
         }
+        Skills.prototype.addSkill = function () {
+            var skill = this.api.skills.post({
+                title: "New Skill",
+                description: "Add Description..",
+                imageUrl: "/img/default_v2.gif"
+            });
+            this.skills.push(skill);
+            this.openDialog(skill);
+        };
         Skills.prototype.openDialog = function (skill) {
-            this.skillDialog.open({ viewModel: index_1.SkillDialog });
-            console.log("dialog", this);
+            this.skillDialog.open({ viewModel: index_1.SkillDialog, model: skill });
         };
         Skills = __decorate([
-            aurelia_framework_1.inject(aurelia_dialog_1.DialogService), 
-            __metadata('design:paramtypes', [aurelia_dialog_1.DialogService])
+            aurelia_framework_1.inject(aurelia_dialog_1.DialogService, api_1.Api), 
+            __metadata('design:paramtypes', [aurelia_dialog_1.DialogService, api_1.Api])
         ], Skills);
         return Skills;
     }());
     exports.Skills = Skills;
-});
-
-define('resources/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    function configure(config) {
-    }
-    exports.configure = configure;
 });
 
 define('aurelia-dialog/ai-dialog',['exports', 'aurelia-templating'], function (exports, _aureliaTemplating) {
@@ -852,9 +868,33 @@ define('aurelia-dialog/dialog-service',['exports', 'aurelia-metadata', 'aurelia-
     }
   }
 });
+define('api',["require", "exports"], function (require, exports) {
+    "use strict";
+    var Api = (function () {
+        function Api() {
+            this.skills = {
+                get: function () {
+                    return (JSON.parse(localStorage.getItem("skills")) || []);
+                },
+                post: function (skill) {
+                    if (!skill) {
+                        return skill;
+                    }
+                    var skills = this.get();
+                    skills.push(skill);
+                    localStorage.setItem("skills", JSON.stringify(skills));
+                    return skill;
+                }
+            };
+        }
+        return Api;
+    }());
+    exports.Api = Api;
+});
+
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css\">\n\n  <div class=\"navbar\">\n    <div class=\"nav navbar-header\">\n      <a class=\"navbar-brand\" href=\"/\">\n        <i class=\"fa fa-home\"></i>\n        <span>${router.title}</span>\n      </a>\n    </div>\n    <ul class=\"nav navbar-nav\">\n      <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n        <a href.bind=\"row.href\">${row.title}</a>\n      </li>\n    </ul>\n  </div>\n\n  <router-view class=\"clearfix\"></router-view>\n</template>\n"; });
-define('text!home/index.html', ['module'], function(module) { module.exports = "<template>\n  <h2>${title}</h2>\n</template>\n"; });
-define('text!profile/index.html', ['module'], function(module) { module.exports = "<template>\n  <h2>${title}</h2>\n</template>\n"; });
-define('text!skills/index.html', ['module'], function(module) { module.exports = "<template>\n  <h2>${title}</h2>\n  <div class=\"btn btn-warning\" click.trigger=\"openDialog()\">Open Dialog</div>\n</template>\n"; });
-define('text!dialog/skillDialog/index.html', ['module'], function(module) { module.exports = "<template>\n  <ai-dialog>\n    <ai-dialog-header>\n      <i class=\"fa fa-close\" click.trigger=\"close()\"></i>\n    </ai-dialog-header>\n    <ai-dialog-body>\n      <h4>Skill</h4>\n    </ai-dialog-body>\n  </ai-dialog>\n</template>\n"; });
+define('text!home/index.html', ['module'], function(module) { module.exports = "<template>\r\n  <h2>${title}</h2>\r\n</template>\r\n"; });
+define('text!profile/index.html', ['module'], function(module) { module.exports = "<template>\r\n  <h2>${title}</h2>\r\n</template>\r\n"; });
+define('text!skills/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"clearfix\">\n    <div class=\"col-xs-12\">\n      <span click.trigger=\"addSkill()\"><i class=\"fa fa-plus\"></i> Add Skill</span>\n    </div>\n    <div class=\"col-xs-6 col-sm-4 col-md-3 col-lg-2\" repeat.for=\"skill of skills\" click.trigger=\"openDialog(skill)\">\n      <img src.bind=\"skill.imageUrl\" style=\"max-width: 100%;\" />\n      <h3 class=\"title text-center\">${skill.title}</h3>\n    </div>\n  </div>\n</template>\n"; });
+define('text!dialog/skillDialog/index.html', ['module'], function(module) { module.exports = "<template>\n  <ai-dialog>\n    <div class=\"text-right\">\n      <i class=\"fa fa-close\" click.trigger=\"close()\"></i>\n    </div>\n    <ai-dialog-body>\n      <img src.bind=\"imageUrl\" style=\"max-width: 100%;\" />\n      <h4 class=\"text-center\">${title}</h4>\n      <p>${description}</p>\n    </ai-dialog-body>\n  </ai-dialog>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

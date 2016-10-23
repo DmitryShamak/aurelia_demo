@@ -1,10 +1,12 @@
 <template>
   <ai-dialog>
-    <ai-dialog-header>
+    <div class="text-right">
       <i class="fa fa-close" click.trigger="close()"></i>
-    </ai-dialog-header>
+    </div>
     <ai-dialog-body>
-      <h4>Skill</h4>
+      <img src.bind="imageUrl" style="max-width: 100%;" />
+      <h4 class="text-center">${title}</h4>
+      <p>${description}</p>
     </ai-dialog-body>
   </ai-dialog>
 </template>

@@ -8,4 +8,11 @@ export class SkillDialog {
   close() {
     this.dialogController.cancel();
   }
+
+  activate(model: any) {
+    console.log(model);
+    for(let key in model) {
+      this[key] = model[key];
+    }
+  }
 }
