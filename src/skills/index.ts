@@ -20,13 +20,19 @@ export class Skills {
     let skill = this.api.skills.post({
       title: "New Skill",
       description: "Add Description..",
-      imageUrl: "/img/default_v2.gif"
+      imageUrl: "/img/default_v2.gif",
+      editMode: true
     });
     this.skills.push(skill);
-    this.openDialog(skill);
+    this.openDialog(skill, true);
   }
 
-  openDialog(skill: any) {
-    this.skillDialog.open({viewModel: SkillDialog, model: skill});
+  openDialog(skill: any, edit: boolean) {
+    this.skillDialog.open({viewModel: SkillDialog, model: {
+      skill: skill,
+      params: {
+        edit: edit
+      }
+    }});
   }
 }

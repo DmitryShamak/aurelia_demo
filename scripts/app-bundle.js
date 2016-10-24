@@ -94,15 +94,14 @@ define('dialog/skillDialog/index',["require", "exports", "aurelia-framework", "a
     var SkillDialog = (function () {
         function SkillDialog(dialogController) {
             this.dialogController = dialogController;
+            this.editMode = false;
         }
         SkillDialog.prototype.close = function () {
             this.dialogController.cancel();
         };
         SkillDialog.prototype.activate = function (model) {
-            console.log(model);
-            for (var key in model) {
-                this[key] = model[key];
-            }
+            this.skill = model.skill;
+            this.editMode = model.params.edit;
         };
         SkillDialog = __decorate([
             aurelia_framework_1.autoinject, 
@@ -135,13 +134,19 @@ define('skills/index',["require", "exports", 'aurelia-dialog', 'aurelia-framewor
             var skill = this.api.skills.post({
                 title: "New Skill",
                 description: "Add Description..",
-                imageUrl: "/img/default_v2.gif"
+                imageUrl: "/img/default_v2.gif",
+                editMode: true
             });
             this.skills.push(skill);
-            this.openDialog(skill);
+            this.openDialog(skill, true);
         };
-        Skills.prototype.openDialog = function (skill) {
-            this.skillDialog.open({ viewModel: index_1.SkillDialog, model: skill });
+        Skills.prototype.openDialog = function (skill, edit) {
+            this.skillDialog.open({ viewModel: index_1.SkillDialog, model: {
+                    skill: skill,
+                    params: {
+                        edit: edit
+                    }
+                } });
         };
         Skills = __decorate([
             aurelia_framework_1.inject(aurelia_dialog_1.DialogService, api_1.Api), 
@@ -896,5 +901,5 @@ define('text!app.html', ['module'], function(module) { module.exports = "<templa
 define('text!home/index.html', ['module'], function(module) { module.exports = "<template>\r\n  <h2>${title}</h2>\r\n</template>\r\n"; });
 define('text!profile/index.html', ['module'], function(module) { module.exports = "<template>\r\n  <h2>${title}</h2>\r\n</template>\r\n"; });
 define('text!skills/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"clearfix\">\n    <div class=\"col-xs-12\">\n      <span click.trigger=\"addSkill()\"><i class=\"fa fa-plus\"></i> Add Skill</span>\n    </div>\n    <div class=\"col-xs-6 col-sm-4 col-md-3 col-lg-2\" repeat.for=\"skill of skills\" click.trigger=\"openDialog(skill)\">\n      <img src.bind=\"skill.imageUrl\" style=\"max-width: 100%;\" />\n      <h3 class=\"title text-center\">${skill.title}</h3>\n    </div>\n  </div>\n</template>\n"; });
-define('text!dialog/skillDialog/index.html', ['module'], function(module) { module.exports = "<template>\n  <ai-dialog>\n    <div class=\"text-right\">\n      <i class=\"fa fa-close\" click.trigger=\"close()\"></i>\n    </div>\n    <ai-dialog-body>\n      <img src.bind=\"imageUrl\" style=\"max-width: 100%;\" />\n      <h4 class=\"text-center\">${title}</h4>\n      <p>${description}</p>\n    </ai-dialog-body>\n  </ai-dialog>\n</template>\n"; });
+define('text!dialog/skillDialog/index.html', ['module'], function(module) { module.exports = "<template>\n  <ai-dialog>\n    <div class=\"text-right\">\n      <i class=\"fa fa-close\" click.trigger=\"close()\"></i>\n    </div>\n    <ai-dialog-body>\n      <img src.bind=\"skill.imageUrl\" style=\"max-width: 100%;\" />\n      <div class=\"text-center\">\n        <input type=\"text\" class=\"custom-input\" value.bind=\"skill.title\" />\n      </div>\n      <textarea class=\"custom-textarea\" value.bind=\"skill.description\"></textarea>\n    </ai-dialog-body>\n  </ai-dialog>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

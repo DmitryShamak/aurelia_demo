@@ -4,9 +4,11 @@
       <i class="fa fa-close" click.trigger="close()"></i>
     </div>
     <ai-dialog-body>
-      <img src.bind="imageUrl" style="max-width: 100%;" />
-      <h4 class="text-center">${title}</h4>
-      <p>${description}</p>
+      <img src.bind="skill.imageUrl" style="max-width: 100%;" />
+      <div class="text-center">
+        <input type="text" class="custom-input" value.bind="skill.title" />
+      </div>
+      <textarea class="custom-textarea" value.bind="skill.description"></textarea>
     </ai-dialog-body>
   </ai-dialog>
 </template>

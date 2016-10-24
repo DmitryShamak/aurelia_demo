@@ -3,6 +3,9 @@ import {DialogController} from "aurelia-dialog";
 
 @autoinject
 export class SkillDialog {
+  editMode: boolean = false;
+  skill: any;
+
   constructor(private dialogController: DialogController) {}
 
   close() {
@@ -10,9 +13,7 @@ export class SkillDialog {
   }
 
   activate(model: any) {
-    console.log(model);
-    for(let key in model) {
-      this[key] = model[key];
-    }
+    this.skill= model.skill;
+    this.editMode = model.params.edit;
   }
 }
