@@ -1,0 +1,31 @@
+.fa.custom-btn {
+  cursor: pointer;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+input.custom-input,
+textarea.custom-textarea {
+  padding: 4px 0;
+
+  border: 0;
+  outline: 0;
+
+  &[disabled] {
+    background: inherit;
+  }
+
+  &.edit-mode {
+    border-bottom: 1px solid #3394dd;
+    padding-bottom: 3px;
+  }
+}
+
+textarea.custom-textarea {
+  resize: none;
+  width: 100%;
+}
+

@@ -1,14 +1,20 @@
 <template>
   <ai-dialog>
-    <div class="text-right">
-      <i class="fa fa-close" click.trigger="close()"></i>
+    <div class="clearfix">
+      <div class="col-xs-6 text-left">
+        <i class="fa fa-trash custom-btn" click.trigger="delete()"></i>
+      </div>
+      <div class="col-xs-6 text-right">
+        <i class="fa fa-edit custom-btn" click.trigger="edit()"></i>
+        <i class="fa fa-window-close-o custom-btn" click.trigger="close()"></i>
+      </div>
     </div>
     <ai-dialog-body>
-      <img src.bind="skill.imageUrl" style="max-width: 100%;" />
+      <img src.bind="skill.imageUrl" click.trigger="editMode && editImage()" style="max-width: 100%;" />
       <div class="text-center">
-        <input type="text" class="custom-input" value.bind="skill.title" />
+        <input type="text" class="custom-input text-center" change.trigger="update()" disabled.bind="!editMode" class.bind="editMode ? 'edit-mode' : '' " value.bind="skill.title" />
       </div>
-      <textarea class="custom-textarea" value.bind="skill.description"></textarea>
+      <textarea class="custom-textarea" change.trigger="update()" disabled.bind="!editMode" class.bind="editMode ? 'edit-mode' : '' " value.bind="skill.description"></textarea>
     </ai-dialog-body>
   </ai-dialog>
 </template>

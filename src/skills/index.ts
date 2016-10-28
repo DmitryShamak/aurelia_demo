@@ -13,7 +13,7 @@ export class Skills {
     this.skillDialog = dialogService;
     this.api = api;
 
-    this.skills = api.skills.get();
+    this.skills = api.skills.get(null);
   }
 
   addSkill() {
@@ -27,11 +27,11 @@ export class Skills {
     this.openDialog(skill, true);
   }
 
-  openDialog(skill: any, edit: boolean) {
+  openDialog(skill: any, editMode: boolean) {
     this.skillDialog.open({viewModel: SkillDialog, model: {
       skill: skill,
       params: {
-        edit: edit
+        editMode: editMode
       }
     }});
   }
